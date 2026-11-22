@@ -31,7 +31,7 @@ public abstract class PaginaCuenta(DashboardNegocio negocio, ILogger logger) : P
         {
             logger.LogWarning("Operación de ModerAI fallida ({Tipo}, MySQL {Numero}).",
                 error.GetType().Name, (error as MySqlException)?.Number);
-            Error = "El servicio no está disponible. Comprueba MySQL, las migraciones 007 y 011, y el servicio del modelo.";
+            Error = "El servicio no está disponible. Comprueba MySQL, la instalación con 01_esquema.sql y el servicio del modelo.";
         }
     }
 

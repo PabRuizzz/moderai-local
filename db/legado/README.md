@@ -1,7 +1,6 @@
 # Reglas en MySQL: despliegue de la demo
 
-1. Como administrador en Workbench, ejecutar `002_identidad_extension.sql`
-   en la base `moderai`. No ejecutar de nuevo todo `schema.sql`.
+1. Para instalar la demo anterior, ejecuta [esquema_legado.sql](esquema_legado.sql) como administrador en Workbench. Crea el esquema `moderai` y la tabla de identidad de la extensión.
 2. Copiar `api/main.py`, `api/database.py` y `api/rules.py` a `~/moderai/api/`.
 3. Mantener las variables DB_HOST, DB_USER, DB_PASSWORD, DB_NAME y DB_SSL_CA
    en la sesión de Ubuntu. Iniciar Uvicorn manualmente como antes.

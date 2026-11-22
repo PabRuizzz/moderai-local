@@ -1,6 +1,6 @@
 /**
  * storage.js
- * Simula la tabla `regla_filtro` (y `usuario_config`) del esquema db/legado/schema.sql
+ * Simula la tabla `regla_filtro` (y `usuario_config`) del esquema db/legado/esquema_legado.sql
  * usando localStorage, para que el Task Flow 1 se pueda recorrer sin backend.
  * Cada fila que aquí se guarda es exactamente la que se vería en la tabla real.
  */
@@ -33,7 +33,7 @@ const ModerAIStorage = (() => {
     set("usuario_config", cfg);
   }
 
-  // Fila con EXACTAMENTE las columnas de la tabla regla_filtro (db/legado/schema.sql)
+  // Fila con EXACTAMENTE las columnas de la tabla regla_filtro (db/legado/esquema_legado.sql)
   function getReglas() {
     return cuentaExtension?.reglas ?? get("regla_filtro", []);
   }

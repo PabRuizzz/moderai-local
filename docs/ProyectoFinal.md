@@ -5,7 +5,7 @@ ModerAI permite definir reglas en lenguaje natural y filtrar publicaciones en X.
 ## Instalación y ejecución
 
 1. Abre `ModerAI.slnx` en Visual Studio con .NET 10. El proyecto de inicio es `ModerAI.Web`.
-2. Abre MySQL Workbench con una cuenta administradora y sigue el [orden de instalación en la carpeta db](../db/README.md#instalación-de-la-base-actual). El script 004 genera la contraseña de servicio.
+2. Abre MySQL Workbench con una cuenta administradora y sigue el [orden de instalación en la carpeta db](../db/README.md#instalación-de-la-base-actual). El script `01_esquema.sql` crea el esquema completo y genera la contraseña de servicio.
 3. En Visual Studio, abre **Administrar secretos de usuario** en `ModerAI.Web` y configura `ConnectionStrings:ModerAI`. Ejemplo de estructura con contraseña ficticia:
 
    ```json
@@ -18,7 +18,7 @@ ModerAI permite definir reglas en lenguaje natural y filtrar publicaciones en X.
 
    En Windows, el lanzador de Python lee la misma entrada `ConnectionStrings:ModerAI` en User Secrets. En ausencia de esa entrada, admite el archivo local anterior, DPAPI o la solicitud de la contraseña. Para un despliegue, suministra los secretos por configuración del servicio. Usa TLS verificado para MySQL remoto.
 4. Inicia el modelo con `./scripts/Iniciar-Dashboard.ps1 -Modelo embeddings`. Este servicio escucha en 8001. Con F5 en Visual Studio, abre `http://127.0.0.1:5180/Dashboard`.
-5. Carga o actualiza la extensión descomprimida desde `moderai-prototipo`. Inicia sesión en Dashboard y abre X con el mismo perfil del navegador. En una publicación visible puedes pulsar **Reportar contenido sin censurar** y elegir una regla activa. En una publicación revelada, **Reportar censura equivocada** abre el formulario con la regla aplicada.
+5. Carga o actualiza la extensión descomprimida desde la carpeta que contiene `manifest.json`. Inicia sesión en Dashboard y abre X con el mismo perfil del navegador. En una publicación visible puedes pulsar **Reportar contenido sin censurar** y elegir una regla activa. En una publicación revelada, **Reportar censura equivocada** abre el formulario con la regla aplicada.
 
 ## Arquitectura y operaciones
 
@@ -113,7 +113,7 @@ En las expresiones, σ selecciona filas, π proyecta columnas y ⋈ representa u
 | Cuentas sin reglas | π id_usuario (usuarios) − π id_usuario (reglas) |
 | Actividad por usuario | agrupar por id_usuario y sumar total_coincidencias (coincidencias_diarias) |
 
-[09_consultas.sql](../db/consultas/09_consultas.sql) contiene diez consultas numeradas, ejemplos que consumen las dos vistas y una llamada a la función. Configura `@id_usuario` al inicio del script para las consultas que filtran por cuenta.
+[03_consultas.sql](../db/03_consultas.sql) contiene diez consultas numeradas, ejemplos que consumen las dos vistas y una llamada a la función. Configura `@id_usuario` al inicio del script para las consultas que filtran por cuenta.
 
 ## Automatización y pruebas
 

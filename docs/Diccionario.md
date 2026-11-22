@@ -82,7 +82,7 @@ Cada columna marcada como PK dentro de una misma clave compuesta identifica la f
 
 ## Restricciones adicionales
 
-- La certeza base admite valores de 0 a 100 en el esquema. Dashboard valida de 31 a 90 al guardar.
+- El esquema y el Dashboard validan cada umbral según su rango: Baja 31–50, Normal 51–70 y Alta 71–90.
 - Una regla borrada tiene activa en falso. Un trigger impide reactivarla o cambiar su fecha de borrado.
 - Las semanas empiezan el lunes y los meses el día 1.
 - Al eliminar una cuenta, sus sesiones se eliminan por cascada. El procedimiento elimina previamente los demás registros dependientes.

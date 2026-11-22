@@ -1,7 +1,6 @@
--- schema.sql
--- Esquema de la tabla que el Task Flow 1 modifica (Fase 1, Engranaje 1 del documento
--- de arquitectura). El prototipo simula esta tabla en el navegador (ver src/shared/storage.js)
--- y muestra su contenido en vivo en options.html -> pestaña "Base de datos".
+-- Esquema opcional de la demo anterior.
+CREATE DATABASE IF NOT EXISTS moderai CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE moderai;
 
 CREATE TABLE IF NOT EXISTS usuario_config (
   id_usuario          VARCHAR(45)  PRIMARY KEY,
@@ -19,12 +18,11 @@ CREATE TABLE IF NOT EXISTS regla_filtro (
   sensibilidad    VARCHAR(20)  NOT NULL DEFAULT 'Normal', -- Baja | Normal | Alta
   activa          TINYINT      NOT NULL DEFAULT 1,
   fecha_creacion  DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  KEY idx_regla_usuario_activa (id_usuario, activa),
   CONSTRAINT fk_regla_usuario
     FOREIGN KEY (id_usuario) REFERENCES usuario_config(id_usuario)
     ON DELETE CASCADE
 );
-
-CREATE INDEX idx_regla_usuario_activa ON regla_filtro(id_usuario, activa);
 
 INSERT INTO usuario_config (id_usuario, activo, nivel_sensibilidad, pin_hash, nip_activo)
 VALUES ('usr_local_123', 1, 70, NULL, 0)
@@ -52,4 +50,10 @@ CREATE TABLE IF NOT EXISTS correccion_usuario (
   etiqueta       TINYINT     NOT NULL,
   fecha          DATE        NOT NULL,
   FOREIGN KEY (id_regla) REFERENCES regla_filtro(id_regla) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS identidad_extension (
+  token_hash CHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+  id_usuario VARCHAR(45) NOT NULL,
+  FOREIGN KEY (id_usuario) REFERENCES usuario_config(id_usuario) ON DELETE CASCADE
 );

@@ -43,7 +43,7 @@ def transaction():
     except HTTPException:
         raise
     except Exception:
-        raise HTTPException(503, "No se pudo acceder a MySQL. Revisa la configuración y la migración SQL.") from None
+        raise HTTPException(503, "No se pudo acceder a MySQL. Revisa la conexión y el esquema de la demo anterior.") from None
 
 
 def get_user(cursor, digest):

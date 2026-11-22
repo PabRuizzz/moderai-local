@@ -5,21 +5,9 @@
   <Project Path="ModerAI.Web/ModerAI.Web.csproj" />
   <Folder Name="/Base de datos/">
     <File Path="db/README.md" />
-  </Folder>
-  <Folder Name="/Base de datos/Esquema/">
-    <File Path="db/esquema/schema_usuarios.sql" />
-  </Folder>
-  <Folder Name="/Base de datos/Migraciones/">
-    <File Path="db/migraciones/003_sesiones_usuarios.sql" />
-    <File Path="db/migraciones/004_acceso_dashboard_local.sql" />
-    <File Path="db/migraciones/005_opciones_cuenta.sql" />
-    <File Path="db/migraciones/006_sensibilidad_usuario.sql" />
-    <File Path="db/migraciones/007_proyecto_final.sql" />
-    <File Path="db/migraciones/011_reportes_feed.sql" />
-    <File Path="db/migraciones/012_perfiles_sensibilidad.sql" />
-  </Folder>
-  <Folder Name="/Base de datos/Consultas/">
-    <File Path="db/consultas/09_consultas.sql" />
+    <File Path="db/01_esquema.sql" />
+    <File Path="db/02_datos_demostracion.sql" />
+    <File Path="db/03_consultas.sql" />
   </Folder>
   <Folder Name="/Documentación/">
     <File Path="README.md" />

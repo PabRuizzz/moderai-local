@@ -1,5 +1,5 @@
 -- Datos ficticios para demostrar ModerAI en una base local.
--- Ejecutar completo en Workbench con una cuenta administradora después de la migración 012.
+-- Ejecutar completo en Workbench con una cuenta administradora después de 01_esquema.sql.
 -- Los tres usuarios tienen una contraseña de demostración y hashes Argon2id distintos.
 -- Si algún nickname ya existe, se cancela la carga completa sin modificar cuentas existentes.
 USE moderai_usuarios;

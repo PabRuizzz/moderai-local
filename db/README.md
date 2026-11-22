@@ -1,30 +1,23 @@
 # Base de datos de usuarios de ModerAI
 
-| Carpeta | Contenido |
+| Archivo | Contenido |
 |---|---|
-| [esquema](esquema/) | Creación de la base `moderai_usuarios` y sus tablas iniciales. |
-| [migraciones](migraciones/) | Sesiones, cuenta de servicio, configuración, sensibilidad, rutinas y reportes del feed. |
-| [consultas](consultas/) | Consultas del proyecto final para ejecutar en Workbench. |
-| [legado](legado/README.md) | Esquema `moderai` y documentación de la demo anterior. |
+| [01_esquema.sql](01_esquema.sql) | Instalación completa de las tablas, vistas, rutinas, evento y cuenta de servicio. |
+| [02_datos_demostracion.sql](02_datos_demostracion.sql) | Cuentas ficticias con reglas, reportes e historial. Opcional. |
+| [03_consultas.sql](03_consultas.sql) | Consultas del proyecto final para ejecutar en Workbench. |
+| [legado](legado/README.md) | Esquema opcional de la demo anterior. |
 
 ## Instalación de la base actual
 
-En una instancia nueva de MySQL Server 8.0.18 o posterior, abre y ejecuta cada archivo completo en Workbench con una cuenta administradora, en este orden.
+1. En MySQL Workbench, abre una conexión administradora a MySQL Server 8.0.29 o posterior y ejecuta [01_esquema.sql](01_esquema.sql) completo. MySQL muestra la contraseña de servicio al crear por primera vez `moderai_dashboard`. Guárdala de forma privada.
+2. Para configurar la conexión e iniciar el Dashboard y FastAPI, consulta la [guía del proyecto final](../docs/ProyectoFinal.md#instalación-y-ejecución).
+3. Para cargar cuentas ficticias, ejecuta [02_datos_demostracion.sql](02_datos_demostracion.sql). Para consultar los resultados, usa [03_consultas.sql](03_consultas.sql).
 
-1. [Esquema inicial](esquema/schema_usuarios.sql)
-2. [003_sesiones_usuarios.sql](migraciones/003_sesiones_usuarios.sql)
-3. [004_acceso_dashboard_local.sql](migraciones/004_acceso_dashboard_local.sql). Se ejecuta una sola vez y MySQL muestra la contraseña generada para `moderai_dashboard`. Guárdala de forma privada.
-4. [005_opciones_cuenta.sql](migraciones/005_opciones_cuenta.sql)
-5. [006_sensibilidad_usuario.sql](migraciones/006_sensibilidad_usuario.sql)
-6. [007_proyecto_final.sql](migraciones/007_proyecto_final.sql)
-7. [011_reportes_feed.sql](migraciones/011_reportes_feed.sql)
-8. [012_perfiles_sensibilidad.sql](migraciones/012_perfiles_sensibilidad.sql)
-
-Para actualizar una base existente, aplica en orden las migraciones pendientes. Para configurar la conexión e iniciar el Dashboard y FastAPI, consulta la [guía del proyecto final](../docs/ProyectoFinal.md#instalación-y-ejecución).
+El esquema está pensado para instalaciones nuevas. Una base que ya está al día puede seguir usándose con sus datos actuales.
 
 ## Modelo
 
-- `usuarios` guarda el nickname único, el hash de contraseña y la configuración de sensibilidad. La migración 012 conserva el perfil anterior, redondea y limita su umbral a 31–90, y da a los otros perfiles los valores iniciales 50, 70 o 90 según su rango.
+- `usuarios` guarda el nickname único, el hash de contraseña y la configuración de sensibilidad. Las cuentas nuevas empiezan con Normal activo y umbrales de 50, 70 y 90.
 - `usuarios` guarda `certeza_baja` (31–50), `certeza_normal` (51–70), `certeza_alta` (71–90) y `sensibilidad_activa`. Las columnas virtuales `nivel_sensibilidad` y `nivel_certeza` muestran el perfil y umbral activos. Solo se evalúan reglas habilitadas que tienen esa sensibilidad.
 - `reglas` guarda el texto y el dueño de cada regla. El borrado lógico registra `fecha_borrado` y establece `activa = FALSE`.
 - `feedback` referencia la regla reportada. Su dueño se obtiene a través de la regla. La clave foránea protege el historial de feedback ante un borrado físico.
