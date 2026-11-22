@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "ModerAI",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsSfSBVSP6IYnkOAUGGeUzUkZ4ZdUK6jM5caWHq5dxn7HGgPHS/SLRkOdtH2Y0hv+EesEf51L//xF2lGE7VWPcxAkxczh7x1Gywk4zkxKa0heo+NM+i/rB+UzBIK/zmOb1LmVJzJrp+v0KOa2mnP2fWvRXQf5EgTyWU1lllH770kL0F8n8K/xjkOZGjCvZ4zrabsFUTd8p4tHwahvX3qtYUc6Qv9HcvspZnQQDEot6qnC4JFvWBzVkeQB+n9+TV3+LeCmKaAuC2pC7Q+RhdgJnA8LkYIEWHsAlqMAp1q+57q1CcGuuNHI/5ejeXwgW0tx8bwT0HeBwRpZ8WkecON9ZwIDAQAB",
+  "version": "0.1.1",
+  "description": "Difumina spoilers, spam y contenido no deseado en tu feed según las reglas que escribes.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:8000/*", "http://127.0.0.1:5180/*"],
+  "background": { "service_worker": "src/background.js" },
+  "action": { "default_title": "ModerAI", "default_popup": "src/popup/popup.html" },
+  "options_page": "src/options/options.html",
+  "content_scripts": [
+    {
+      "matches": ["http://127.0.0.1/Dashboard*"],
+      "js": ["src/content/vincular-dashboard.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["src/shared/moderador.js", "src/content/content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

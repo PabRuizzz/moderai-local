@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>ModerAI-Web-Local</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../ModerAI.Entidades/ModerAI.Entidades.csproj" />
+    <ProjectReference Include="../ModerAI.Negocios/ModerAI.Negocios.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,64 @@
+body{
+  background:#f6f7f9;
+}
+
+.configuracion-contenedor{
+  max-width:960px;
+}
+
+.acceso-cuenta{
+  width:min(100%,28rem);
+  margin-inline:auto;
+}
+
+#configuracionCuenta:has(.acceso-cuenta:not([hidden])){
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:clamp(20rem,52dvh,32rem);
+  padding-block:1rem;
+}
+
+body:has(#panel-cuenta:not(.d-none) #acceso:not([hidden])) #cuentaEstado{
+  width:min(100%,28rem);
+  margin-inline:auto;
+}
+
+/* Tabs con forma de tarjeta, como en el wireframe (borde marcado, sin relleno de color) */
+.tab-card{
+  border:1.5px solid #1a1a1a;
+  border-radius:10px;
+  background:#fff;
+  color:#1a1a1a;
+  padding:14px 16px;
+  font-size:14px;
+  text-align:center;
+}
+.tab-card.active{
+  background:#1a1a1a;
+  color:#fff;
+}
+
+.card{
+  border-radius:10px;
+}
+
+/* tarjetas apiladas de reglas en móvil */
+.regla-mobile-card{
+  border:1px solid #e2e2e2;
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:13.5px;
+}
+.regla-mobile-card .meta{
+  font-size:11.5px;
+  color:#767676;
+  margin-top:4px;
+}
+
+code{
+  background:#f1f1f1;
+  padding:1px 5px;
+  border-radius:4px;
+  font-size:12px;
+}

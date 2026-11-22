@@ -1,0 +1,85 @@
+@page "/Reportes"
+@model ModerAI.Web.Pages.Reportes.IndexModel
+@{
+    ViewData["Title"] = "Reportar publicación";
+    var regla = Model.ReglaReportada?.Id ?? Model.Reportes.FirstOrDefault()?.IdRegla;
+}
+<p><a asp-page="/Dashboard/Index" asp-route-seccion="feedback">Volver al historial</a></p>
+<h1>Reportar publicación</h1>
+@if (Model.Error is not null) { <p class="error" role="alert">@Model.Error</p> }
+@if (Model.Aviso is not null) { <p class="aviso" role="status">@Model.Aviso</p> }
+@if (Model.Contexto is { } contexto && Model.IdBorrador is Guid borrador)
+{
+    <section class="tarjeta">
+        <h2>@ContextoReporte.Etiqueta(contexto.Tipo)</h2>
+        <h3>Publicación</h3>
+        <blockquote class="publicacion">@contexto.Publicacion</blockquote>
+        @if (contexto.ReglaAplicada is not null && Model.ReglaReportada is null)
+        {
+            <p>La regla que censuró la publicación ya no está disponible.</p>
+        }
+        else if (contexto.ReglaAplicada is null && Model.ReglasElegibles.Count == 0)
+        {
+            <p>No tienes reglas activas para asociar a este reporte.</p>
+        }
+        else
+        {
+            <form method="post" asp-page-handler="CrearDesdeFeed">
+                <input type="hidden" name="borrador" value="@borrador">
+                @if (Model.ReglaReportada is { } aplicada)
+                {
+                    <p><strong>Regla aplicada</strong> @aplicada.Texto</p>
+                    <input type="hidden" name="regla" value="@aplicada.Id">
+                }
+                else
+                {
+                    <label for="reglaEsperada">Regla activa que debía censurar la publicación</label>
+                    <select id="reglaEsperada" name="regla" required>
+                        <option value="">Selecciona una regla</option>
+                        @foreach (var candidata in Model.ReglasElegibles)
+                        {
+                            <option value="@candidata.Id">@candidata.Texto</option>
+                        }
+                    </select>
+                }
+                <label for="comentario">Comentario opcional</label>
+                <textarea id="comentario" name="comentario" maxlength="2000">@Model.Comentario</textarea>
+                <button>Enviar reporte</button>
+            </form>
+        }
+    </section>
+}
+else if (Model.ReglaReportada is { } activa)
+{
+    <section class="tarjeta">
+        <h2>@activa.Texto</h2>
+        <form method="post" asp-page-handler="Crear">
+            <input type="hidden" name="regla" value="@activa.Id">
+            <label for="nuevoReporte">Describe por qué la publicación no coincide con la regla</label>
+            <textarea id="nuevoReporte" name="texto" maxlength="2000" required></textarea>
+            <button>Enviar reporte</button>
+        </form>
+    </section>
+}
+@foreach (var reporte in Model.Reportes)
+{
+    <section class="tarjeta">
+        <h2>Reporte del @reporte.Fecha.ToString("dd/MM/yyyy HH:mm") UTC</h2>
+        @if (reporte.Tipo is not null)
+        {
+            <p>@ContextoReporte.Etiqueta(reporte.Tipo) · @reporte.Regla</p>
+            <blockquote class="publicacion">@reporte.Publicacion</blockquote>
+        }
+        <form method="post" asp-page-handler="Editar">
+            <input type="hidden" name="regla" value="@regla">
+            <input type="hidden" name="reporte" value="@reporte.Id">
+            <label>Comentario<textarea name="texto" maxlength="2000" required="@(reporte.Tipo is null)">@reporte.Texto</textarea></label>
+            <button>Guardar cambios</button>
+        </form>
+        <form method="post" asp-page-handler="Borrar">
+            <input type="hidden" name="regla" value="@regla">
+            <input type="hidden" name="reporte" value="@reporte.Id">
+            <button class="secundario" data-confirmacion="¿Eliminar este reporte?">Eliminar reporte</button>
+        </form>
+    </section>
+}

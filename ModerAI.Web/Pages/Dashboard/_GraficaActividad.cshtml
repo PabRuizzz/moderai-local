@@ -1,0 +1,51 @@
+@using System.Globalization
+@model IReadOnlyList<ModerAI.Entidades.Coincidencia>
+@{
+    var registros = Model.OrderBy(registro => registro.Fecha).ToArray();
+    var inicio = registros[0].Fecha;
+    var fin = registros[^1].Fecha;
+    var dias = fin.DayNumber - inicio.DayNumber;
+    var paso = Math.Max(1m, Math.Ceiling(registros.Max(registro => registro.Total) / 4m));
+    var maximo = paso * 4;
+    string Coordenada(decimal proporcion) => (proporcion * 100).ToString("0.####", CultureInfo.InvariantCulture);
+    var puntos = registros.Select(registro => (
+        Registro: registro,
+        X: Coordenada(dias == 0 ? .5m : (registro.Fecha.DayNumber - inicio.DayNumber) / (decimal)dias),
+        Y: Coordenada(1m - registro.Total / maximo)
+    )).ToArray();
+    var trayectoria = string.Join(" ", puntos.Select(punto => $"{punto.X},{punto.Y}"));
+}
+<figure class="grafica-actividad" data-grafica-actividad>
+    <figcaption>Coincidencias registradas</figcaption>
+    <div class="grafica-ejes">
+        @for (var marca = 4; marca >= 0; marca--)
+        {
+            var total = paso * marca;
+            <span class="grafica-marca" style="--y: @(Coordenada(marca / 4m))%">
+                @(total >= 1000000 ? total.ToString("0.#E+0") : total.ToString("N0"))
+            </span>
+        }
+        <div class="grafica-puntos" role="group" aria-label="Actividad de coincidencias por fecha">
+            @if (puntos.Length > 1)
+            {
+                <svg class="grafica-linea" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <polyline points="@trayectoria" vector-effect="non-scaling-stroke" />
+                </svg>
+            }
+            @foreach (var (registro, x, y) in puntos)
+            {
+                var detalle = $"{registro.Fecha:dd/MM/yyyy} · {registro.Total:N0} coincidencias";
+                <button type="button" class="grafica-punto" style="--x: @(x)%; --y: @(y)%"
+                        aria-label="@detalle" title="@detalle"></button>
+            }
+        </div>
+        <div class="grafica-fechas @(dias == 0 ? "fecha-unica" : null)">
+            <time datetime="@inicio.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)">@inicio.ToString("dd/MM/yyyy")</time>
+            @if (dias > 0)
+            {
+                <time datetime="@fin.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)">@fin.ToString("dd/MM/yyyy")</time>
+            }
+        </div>
+    </div>
+    <output class="grafica-detalle">Fecha (UTC) y total al seleccionar un punto.</output>
+</figure>

@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../ModerAI.Entidades/ModerAI.Entidades.csproj" />
+    <PackageReference Include="MySql.Data" Version="26.10.0" />
+  </ItemGroup>
+</Project>

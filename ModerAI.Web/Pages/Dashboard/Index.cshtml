@@ -1,0 +1,211 @@
+@page "/Dashboard"
+@model ModerAI.Web.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var cuenta = Model.Cuenta;
+    var pestañas = new[] { ("coincidencias", "Coincidencias"), ("reglas", "Reglas"), ("feedback", "Feedback"), ("cuenta", "Cuenta") };
+}
+<h1>Dashboard</h1>
+<nav class="pestanas" aria-label="Dashboard">
+    @foreach (var (seccion, etiqueta) in pestañas)
+    {
+        <a asp-page="./Index" asp-route-seccion="@seccion" aria-current="@(seccion == Model.Seccion ? "page" : null)">@etiqueta</a>
+    }
+</nav>
+@if (Model.Error is not null) { <p role="alert" class="error">@Model.Error</p> }
+@if (Model.Aviso is not null) { <p role="status" class="aviso">@Model.Aviso</p> }
+@if (cuenta is null)
+{
+    <section class="tarjeta acceso">
+        <h2>Iniciar sesión</h2>
+        <form method="post" asp-page-handler="Acceso">
+            <label for="loginNickname">Nickname</label>
+            <input id="loginNickname" name="nickname" autocomplete="username" maxlength="50" required>
+            <label for="claveAcceso">Contraseña</label>
+            <input id="claveAcceso" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+            <div class="acciones">
+                <button name="crear" value="false">Iniciar sesión</button>
+                <button name="crear" value="true" class="secundario">Crear cuenta</button>
+            </div>
+            <small>Las cuentas nuevas requieren una contraseña de al menos 12 caracteres.</small>
+        </form>
+    </section>
+    return;
+}
+
+@if (Model.Seccion == "reglas")
+{
+    <section class="tarjeta">
+        <h2>Crear regla</h2>
+        <form method="post" asp-page-handler="GuardarRegla" data-protegido>
+            <div class="campos tres">
+                <label>Prompt<textarea name="texto" maxlength="2000" required></textarea></label>
+                <label>Categoría
+                    <select name="categoria">@foreach (var cat in DashboardNegocio.Categorias) { <option value="@cat">@DashboardNegocio.Etiqueta(cat)</option> }</select>
+                </label>
+                <label>Sensibilidad
+                    <select name="sensibilidad">@foreach (var sensibilidad in DashboardNegocio.Sensibilidades) { <option selected="@(sensibilidad == cuenta.Sensibilidad)">@sensibilidad</option> }</select>
+                </label>
+            </div>
+            <button>Guardar y activar regla</button>
+        </form>
+    </section>
+    <section class="tarjeta">
+        <h2>Listado de reglas</h2>
+        <form method="get" class="campos filtros">
+            <input type="hidden" name="seccion" value="reglas">
+            <label>Buscar<input name="texto" value="@Model.Texto" maxlength="200"></label>
+            <label>Categoría
+                <select name="categoria">
+                    <option value="">Todas</option>
+                    @foreach (var cat in DashboardNegocio.Categorias)
+                    { <option value="@cat" selected="@(cat == Model.Categoria)">@DashboardNegocio.Etiqueta(cat)</option> }
+                </select>
+            </label>
+            <label class="casilla"><input type="checkbox" name="sinReportes" value="true" checked="@Model.SinReportes"> Sin reportes</label>
+            <button>Filtrar</button>
+        </form>
+        @if (Model.Reglas.Count == 0) { <p>No hay reglas que coincidan con el filtro.</p> }
+        @foreach (var regla in Model.Reglas)
+        {
+            <details class="registro">
+                <summary><strong>@regla.Texto</strong><span>@DashboardNegocio.Etiqueta(regla.Categoria) · @regla.Sensibilidad · @(regla.Activa ? "Activa" : "Inactiva") · Umbral @regla.Umbral %</span></summary>
+                <form method="post" asp-page-handler="GuardarRegla" data-protegido>
+                    <input type="hidden" name="regla" value="@regla.Id">
+                    <div class="campos tres">
+                        <label>Prompt<textarea name="texto" maxlength="2000" required>@regla.Texto</textarea></label>
+                        <label>Categoría
+                            <select name="categoria">@foreach (var cat in DashboardNegocio.Categorias) { <option value="@cat" selected="@(regla.Categoria == cat)">@DashboardNegocio.Etiqueta(cat)</option> }</select>
+                        </label>
+                        <label>Sensibilidad
+                            <select name="sensibilidad">@foreach (var s in DashboardNegocio.Sensibilidades) { <option selected="@(regla.Sensibilidad == s)">@s</option> }</select>
+                        </label>
+                    </div>
+                    <label class="casilla"><input type="checkbox" name="activa" value="true" checked="@regla.Activa"> Regla activa</label>
+                    <button>Guardar cambios</button>
+                </form>
+                <form method="post" asp-page-handler="BorrarRegla" data-protegido>
+                    <input type="hidden" name="regla" value="@regla.Id">
+                    <button class="secundario" data-confirmacion="¿Borrar esta regla?">Borrar regla</button>
+                </form>
+            </details>
+        }
+    </section>
+}
+else if (Model.Seccion == "coincidencias")
+{
+    <section class="tarjeta">
+        <h2>Historial de coincidencias</h2>
+        <form method="get" class="campos filtros">
+            <input type="hidden" name="seccion" value="coincidencias">
+            <label>Período
+                <select name="periodo" data-periodo-actividad>
+                    <option value="diario" selected="@(Model.Periodo == "diario")">Diario</option>
+                    <option value="semanal" selected="@(Model.Periodo == "semanal")">Semanal</option>
+                    <option value="mensual" selected="@(Model.Periodo == "mensual")">Mensual</option>
+                </select>
+            </label>
+            <label>Desde<input type="date" name="desde" value="@Model.Desde?.ToString("yyyy-MM-dd")"></label>
+            <label>Hasta<input type="date" name="hasta" value="@Model.Hasta?.ToString("yyyy-MM-dd")"></label>
+            <button>Consultar</button>
+        </form>
+        @if (Model.Actividad.Count == 0) { <p>No hay registros para este período.</p> }
+        else
+        {
+            <partial name="_GraficaActividad" model="Model.Actividad" />
+            <details class="actividad-registros">
+                <summary>Ver datos por período</summary>
+                <table>
+                    <thead><tr><th scope="col">Inicio del período (UTC)</th><th scope="col">Coincidencias</th></tr></thead>
+                    <tbody>
+                        @foreach (var registro in Model.Actividad)
+                        {
+                            <tr>
+                                <td>@registro.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td>@registro.Total.ToString("N0")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </details>
+        }
+    </section>
+}
+else if (Model.Seccion == "feedback")
+{
+    <section class="tarjeta">
+        <h2>Historial de feedback</h2>
+        @if (Model.Reportes.Count == 0) { <p>No hay reportes registrados.</p> }
+        @foreach (var reporte in Model.Reportes)
+        {
+            <article class="registro">
+                @if (reporte.Tipo is not null) { <strong>@ContextoReporte.Etiqueta(reporte.Tipo)</strong> }
+                <p>@reporte.Texto</p>
+                <small>@reporte.Regla · @reporte.Fecha.ToString("dd/MM/yyyy HH:mm") UTC</small>
+                @if (reporte.Publicacion is not null)
+                {
+                    <details>
+                        <summary>Ver publicación reportada</summary>
+                        <blockquote class="publicacion">@reporte.Publicacion</blockquote>
+                    </details>
+                }
+            </article>
+        }
+    </section>
+}
+else
+{
+    <section class="tarjeta">
+        <h2>Configuración de la cuenta</h2>
+        <p>ModerAI aplica las reglas activas que tienen la sensibilidad seleccionada.</p>
+        <form method="post" asp-page-handler="Configurar" class="campos filtros">
+            <label>Nickname<input name="nickname" maxlength="50" value="@cuenta.Nickname" required></label>
+            <label>Sensibilidad activa
+                <select name="sensibilidadActiva">
+                    @foreach (var sensibilidad in DashboardNegocio.Sensibilidades)
+                    {
+                        <option value="@sensibilidad" selected="@(cuenta.Sensibilidad == sensibilidad)">@sensibilidad</option>
+                    }
+                </select>
+            </label>
+            <label>Certeza baja (%)<input type="number" name="certezaBaja" min="31" max="50" value="@cuenta.CertezaBaja" required></label>
+            <label>Certeza normal (%)<input type="number" name="certezaNormal" min="51" max="70" value="@cuenta.CertezaNormal" required></label>
+            <label>Certeza alta (%)<input type="number" name="certezaAlta" min="71" max="90" value="@cuenta.CertezaAlta" required></label>
+            <button>Guardar configuración</button>
+        </form>
+    </section>
+    @if (Model.Estado is { } estado)
+    {
+        <section class="tarjeta">
+            <h2>Johnson Box</h2>
+            <dl class="indicadores">
+                <div><dt>Reglas activas</dt><dd>@estado.ReglasActivas</dd></div>
+                <div><dt>Coincidencias hoy (UTC)</dt><dd>@estado.CoincidenciasHoy</dd></div>
+            </dl>
+        </section>
+    }
+    <section class="tarjeta" data-nip-cuenta="@cuenta.Id">
+        <h2>Control parental</h2>
+        <p>El NIP se guarda en este navegador y protege la edición de reglas en este Dashboard.</p>
+        <form id="formNip">
+            <label>NIP de 4 dígitos<input id="nuevoNip" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></label>
+            <div class="acciones"><button>Guardar NIP</button><button id="quitarNip" type="button" class="secundario">Desactivar NIP</button></div>
+            <p id="estadoNip" role="status"></p>
+        </form>
+    </section>
+    <section class="tarjeta">
+        <form method="post" asp-page-handler="Salir"><button class="secundario">Cerrar sesión</button></form>
+        <details>
+            <summary>Eliminar mi cuenta</summary>
+            <form method="post" asp-page-handler="EliminarCuenta">
+                <p>Esta operación elimina tus reglas, reportes, coincidencias y sesiones.</p>
+                <label>Escribe ELIMINAR<input name="confirmacion" pattern="ELIMINAR" required></label>
+                <button class="peligro">Eliminar cuenta</button>
+            </form>
+        </details>
+    </section>
+}
+@if (Model.Seccion == "reglas")
+{
+    <div id="nipReglas" data-nip-cuenta="@cuenta.Id"></div>
+}

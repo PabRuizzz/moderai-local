@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>@ViewData["Title"] · ModerAI</title>
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+    <script src="~/js/dashboard.js" asp-append-version="true" defer></script>
+</head>
+<body>
+    <header class="barra"><div class="contenedor"><a asp-page="/Dashboard/Index">◐ ModerAI</a></div></header>
+    <main class="contenedor">@RenderBody()</main>
+</body>
+</html>

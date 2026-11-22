@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../ModerAI.Entidades/ModerAI.Entidades.csproj" />
+    <ProjectReference Include="../ModerAI.Datos/ModerAI.Datos.csproj" />
+  </ItemGroup>
+</Project>
