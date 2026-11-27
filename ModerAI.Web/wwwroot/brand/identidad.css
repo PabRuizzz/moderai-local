@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "Prompt";
+  src: url("prompt-bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --grafito: #2e2e2e;
+  --plata: #d5d5d5;
+  --menta: #05f4b3;
+  --esmeralda: #009874;
+  --claro: #e4e3de;
+  --tinta: #242424;
+  --display: "Prompt", "Arial Black", system-ui, sans-serif;
+  --texto: "Noto Sans", "Segoe UI", system-ui, sans-serif;
+  --filete: radial-gradient(circle at 3px 50%, var(--menta) 0 2.6px, transparent 3px),
+    radial-gradient(circle at calc(100% - 3px) 50%, var(--menta) 0 2.6px, transparent 3px),
+    linear-gradient(var(--esmeralda),var(--esmeralda)) center / calc(100% - 6px) 1px no-repeat;
+  --capsula: linear-gradient(103deg, #05f4b3 4%, #03c994 40%, #009874 61%, #32574b 87%, #2e2e2e 100%);
+}

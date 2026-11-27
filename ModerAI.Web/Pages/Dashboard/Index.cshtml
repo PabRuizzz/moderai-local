@@ -3,19 +3,18 @@
 @{
     ViewData["Title"] = "Dashboard";
     var cuenta = Model.Cuenta;
+    ViewData["EsDashboard"] = true;
+    ViewData["Apodo"] = cuenta?.Nickname;
     var pestañas = new[] { ("coincidencias", "Coincidencias"), ("reglas", "Reglas"), ("feedback", "Feedback"), ("cuenta", "Cuenta") };
 }
-<h1>Dashboard</h1>
-<nav class="pestanas" aria-label="Dashboard">
-    @foreach (var (seccion, etiqueta) in pestañas)
-    {
-        <a asp-page="./Index" asp-route-seccion="@seccion" aria-current="@(seccion == Model.Seccion ? "page" : null)">@etiqueta</a>
-    }
-</nav>
 @if (Model.Error is not null) { <p role="alert" class="error">@Model.Error</p> }
 @if (Model.Aviso is not null) { <p role="status" class="aviso">@Model.Aviso</p> }
 @if (cuenta is null)
 {
+    <div class="acceso-marco">
+        <div class="portada">
+            <div class="portada-titulo"><h1>Dashboard</h1><p>Gestiona las reglas que filtran tu feed en X.</p></div>
+        </div>
     <section class="tarjeta acceso">
         <h2>Iniciar sesión</h2>
         <form method="post" asp-page-handler="Acceso">
@@ -30,16 +29,37 @@
             <small>Las cuentas nuevas requieren una contraseña de al menos 12 caracteres.</small>
         </form>
     </section>
+    </div>
     return;
 }
 
+@{
+    var titulo = pestañas.First(p => p.Item1 == Model.Seccion).Item2;
+    var descripcion = Model.Seccion switch
+    {
+        "coincidencias" => "Consulta cuándo y con qué frecuencia se aplican tus reglas.",
+        "feedback" => "Revisa los reportes que enviaste desde tu feed.",
+        "cuenta" => "Ajusta la sensibilidad del filtro y administra tu acceso.",
+        _ => "Elige qué publicaciones quieres filtrar en tu feed."
+    };
+}
+<section class="cabecera-seccion">
+    <div><h1>@titulo</h1><p>@descripcion</p></div>
+</section>
+<nav class="pestanas" aria-label="Dashboard">
+    @foreach (var (seccion, etiqueta) in pestañas)
+    {
+        <a asp-page="./Index" asp-route-seccion="@seccion" aria-current="@(seccion == Model.Seccion ? "page" : null)"><span aria-hidden="true" class="icono icono-@seccion"></span>@etiqueta</a>
+    }
+</nav>
+<div class="paneles paneles-@Model.Seccion">
 @if (Model.Seccion == "reglas")
 {
     <section class="tarjeta">
         <h2>Crear regla</h2>
         <form method="post" asp-page-handler="GuardarRegla" data-protegido>
             <div class="campos tres">
-                <label>Prompt<textarea name="texto" maxlength="2000" required></textarea></label>
+                <label>Texto de la regla<textarea name="texto" maxlength="2000" placeholder="Ej. Ocultar spoilers de series que aún no he visto" required></textarea></label>
                 <label>Categoría
                     <select name="categoria">@foreach (var cat in DashboardNegocio.Categorias) { <option value="@cat">@DashboardNegocio.Etiqueta(cat)</option> }</select>
                 </label>
@@ -65,7 +85,7 @@
             <label class="casilla"><input type="checkbox" name="sinReportes" value="true" checked="@Model.SinReportes"> Sin reportes</label>
             <button>Filtrar</button>
         </form>
-        @if (Model.Reglas.Count == 0) { <p>No hay reglas que coincidan con el filtro.</p> }
+        @if (Model.Reglas.Count == 0) { <p class="vacio">No hay reglas que coincidan con el filtro.</p> }
         @foreach (var regla in Model.Reglas)
         {
             <details class="registro">
@@ -73,7 +93,7 @@
                 <form method="post" asp-page-handler="GuardarRegla" data-protegido>
                     <input type="hidden" name="regla" value="@regla.Id">
                     <div class="campos tres">
-                        <label>Prompt<textarea name="texto" maxlength="2000" required>@regla.Texto</textarea></label>
+                        <label>Texto de la regla<textarea name="texto" maxlength="2000" required>@regla.Texto</textarea></label>
                         <label>Categoría
                             <select name="categoria">@foreach (var cat in DashboardNegocio.Categorias) { <option value="@cat" selected="@(regla.Categoria == cat)">@DashboardNegocio.Etiqueta(cat)</option> }</select>
                         </label>
@@ -109,7 +129,7 @@ else if (Model.Seccion == "coincidencias")
             <label>Hasta<input type="date" name="hasta" value="@Model.Hasta?.ToString("yyyy-MM-dd")"></label>
             <button>Consultar</button>
         </form>
-        @if (Model.Actividad.Count == 0) { <p>No hay registros para este período.</p> }
+        @if (Model.Actividad.Count == 0) { <p class="vacio">No hay registros para este período.</p> }
         else
         {
             <partial name="_GraficaActividad" model="Model.Actividad" />
@@ -135,7 +155,7 @@ else if (Model.Seccion == "feedback")
 {
     <section class="tarjeta">
         <h2>Historial de feedback</h2>
-        @if (Model.Reportes.Count == 0) { <p>No hay reportes registrados.</p> }
+        @if (Model.Reportes.Count == 0) { <p class="vacio">No hay reportes registrados.</p> }
         @foreach (var reporte in Model.Reportes)
         {
             <article class="registro">
@@ -177,7 +197,7 @@ else
     @if (Model.Estado is { } estado)
     {
         <section class="tarjeta">
-            <h2>Johnson Box</h2>
+            <h2>Resumen de actividad <small>Johnson Box</small></h2>
             <dl class="indicadores">
                 <div><dt>Reglas activas</dt><dd>@estado.ReglasActivas</dd></div>
                 <div><dt>Coincidencias hoy (UTC)</dt><dd>@estado.CoincidenciasHoy</dd></div>
@@ -209,3 +229,4 @@ else
 {
     <div id="nipReglas" data-nip-cuenta="@cuenta.Id"></div>
 }
+</div>

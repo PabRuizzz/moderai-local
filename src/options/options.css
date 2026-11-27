@@ -1,64 +1,38 @@
-body{
-  background:#f6f7f9;
-}
+@import url("../brand/identidad.css");
 
-.configuracion-contenedor{
-  max-width:960px;
+body { margin: 0; font-family: var(--texto); color: var(--plata); background: var(--grafito); }
+.configuracion-contenedor { max-width: 80rem; }
+.configuracion-contenedor > header { gap: 1rem !important; }
+.configuracion-contenedor > header::after { content:""; height: 8px; flex: 1; min-width: 2rem; background: var(--filete); }
+.configuracion-contenedor > header nav { order: 1; }
+.configuracion-contenedor > header .btn-link { color: var(--plata) !important; }
+.options-brand { display: flex; align-items: center; gap: .65rem; font: 700 1.3rem var(--display); letter-spacing: -.06em; }
+.options-brand img { width: 2.8rem; }
+.options-portada { margin: 1.25rem 0; }
+.options-portada h1 { font: 700 clamp(2.65rem,7.7vw,7rem)/1 var(--display); letter-spacing: -.065em; margin: 0; }
+#pestanasConfiguracion { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .25rem; margin: 0 0 1.3rem; border-block: 1px solid #666; }
+#pestanasConfiguracion > div { width: auto; padding: 0; margin: 0; }
+.tab-card { border: 0; border-radius: 0; border-bottom: 3px solid transparent; color: var(--plata); padding: .75rem; }
+.tab-card:hover,.tab-card.active { color: var(--menta); border-color: var(--menta); }
+.card,.modal-content,.regla-mobile-card { border: 0; border-radius: .65rem; background: var(--plata); color: var(--tinta); }
+#panel-prompts .card:has(#formRegla),.card:has(#johnsonTitulo) { background: var(--menta); }
+.card-body { padding: clamp(1.1rem,2.3vw,2rem); }
+.card a { color: #00533e; }
+.card h2,.card h5,.modal-content h6 { font: 700 clamp(1.35rem,2.3vw,2.1rem)/1.15 var(--display); letter-spacing: -.045em; }
+.card .text-muted,.modal-content .text-muted { color: #454545 !important; }
+.card .table { --bs-table-bg: transparent; --bs-table-color: #252525; --bs-table-border-color: #999; }
+.card .form-control,.card .form-select { background-color: #f5f4ef; border-color: #808079; }
+.form-check-input:checked { background-color: #00664d; border-color: #00664d; }
+#usuarioActual,#cuentaEstado { color: var(--plata); }
+#cuentaEstado.text-danger { color: #ffa9ab !important; }
+:focus-visible { outline: 3px solid #009874; outline-offset: 2px; }
+.acceso-cuenta { width: min(100%,29rem); margin-inline: auto; }
+#configuracionCuenta:has(.acceso-cuenta:not([hidden])) { display: grid; align-content: center; min-height: clamp(20rem,52dvh,32rem); padding-block: 1rem; }
+body:has(#panel-cuenta:not(.d-none) #acceso:not([hidden])) #cuentaEstado { width: min(100%,29rem); margin-inline: auto; }
+.regla-mobile-card { padding: .85rem; overflow-wrap: anywhere; border: 1px solid #8b8b8b; }
+.regla-mobile-card .meta { color: #454545; font-size: .85rem; }
+code { color: #184c3e; background: #ededeb; padding: 1px 4px; border-radius: 3px; }
+@media (max-width: 38rem) {
+  #pestanasConfiguracion { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
-
-.acceso-cuenta{
-  width:min(100%,28rem);
-  margin-inline:auto;
-}
-
-#configuracionCuenta:has(.acceso-cuenta:not([hidden])){
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  min-height:clamp(20rem,52dvh,32rem);
-  padding-block:1rem;
-}
-
-body:has(#panel-cuenta:not(.d-none) #acceso:not([hidden])) #cuentaEstado{
-  width:min(100%,28rem);
-  margin-inline:auto;
-}
-
-/* Tabs con forma de tarjeta, como en el wireframe (borde marcado, sin relleno de color) */
-.tab-card{
-  border:1.5px solid #1a1a1a;
-  border-radius:10px;
-  background:#fff;
-  color:#1a1a1a;
-  padding:14px 16px;
-  font-size:14px;
-  text-align:center;
-}
-.tab-card.active{
-  background:#1a1a1a;
-  color:#fff;
-}
-
-.card{
-  border-radius:10px;
-}
-
-/* tarjetas apiladas de reglas en móvil */
-.regla-mobile-card{
-  border:1px solid #e2e2e2;
-  border-radius:8px;
-  padding:10px 12px;
-  font-size:13.5px;
-}
-.regla-mobile-card .meta{
-  font-size:11.5px;
-  color:#767676;
-  margin-top:4px;
-}
-
-code{
-  background:#f1f1f1;
-  padding:1px 5px;
-  border-radius:4px;
-  font-size:12px;
-}
+#cerrarSesion { color: var(--plata); border-color: #999; }

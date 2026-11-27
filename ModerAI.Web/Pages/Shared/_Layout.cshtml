@@ -1,3 +1,7 @@
+@{
+    var esReporte = ViewData["EsReporte"] is true;
+    var usaIdentidadModerAI = esReporte || ViewData["EsDashboard"] is true;
+}
 <!doctype html>
 <html lang="es">
 <head>
@@ -5,10 +9,33 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>@ViewData["Title"] · ModerAI</title>
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true">
+    @if (usaIdentidadModerAI)
+    {
+        <link rel="stylesheet" href="~/css/panel.css" asp-append-version="true">
+        @if (esReporte)
+        {
+            <link rel="stylesheet" href="~/css/reportes.css" asp-append-version="true">
+        }
+        <link rel="icon" href="~/brand/ojo.png" type="image/png">
+    }
     <script src="~/js/dashboard.js" asp-append-version="true" defer></script>
 </head>
 <body>
+    @if (usaIdentidadModerAI)
+    {
+        <header class="cabecera"><div class="contenedor">
+            <a class="marca" asp-page="/Dashboard/Index"><img src="~/brand/ojo.png" alt="">ModerAI</a>
+            <span class="ruta">@(esReporte ? "Reportes" : "Dashboard")</span>
+            @if (ViewData["Apodo"] is string apodo)
+            {
+                <a class="perfil" asp-page="/Dashboard/Index" asp-route-seccion="cuenta"><span class="perfil-punto" aria-hidden="true"></span>@apodo</a>
+            }
+        </div></header>
+    }
+    else
+    {
     <header class="barra"><div class="contenedor"><a asp-page="/Dashboard/Index">◐ ModerAI</a></div></header>
+    }
     <main class="contenedor">@RenderBody()</main>
 </body>
 </html>
