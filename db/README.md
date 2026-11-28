@@ -34,3 +34,6 @@ Con una sesión activa, **Reglas** administra las reglas de la cuenta. **Feedbac
 La extensión usa las reglas y el nivel de certeza de la cuenta que inicia sesión en el mismo perfil de Chrome. La API de evaluación contabiliza cada texto una vez por cuenta y día UTC si coincide con alguna regla. Las tres series se actualizan en una transacción. El total del historial usa únicamente la serie mensual. El evento de MySQL elimina registros vencidos una vez al día cuando `event_scheduler` está habilitado.
 
 Las rutas de extensión solo aceptan el origen autorizado de Chrome junto con la sesión web de ModerAI. Al cerrar sesión en el dashboard, la extensión pierde ese acceso. Sin iniciar sesión, el prototipo conserva sus datos de demostración. El NIP sigue siendo una configuración local del navegador.
+
+## Ultima revision
+No presenta errores y funciona correctamente en esta rama
